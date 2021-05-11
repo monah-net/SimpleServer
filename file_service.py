@@ -9,7 +9,7 @@ def create_file(content=''):
     print(f'File {filename} was created in {os.getcwd()} directory.')
 
 
-def read_file(filename) -> str:
+def read_file(filename):
     with open(filename, 'r') as file:
         content = file.read()
     print(content)
@@ -20,7 +20,7 @@ def delete_file(filename):
     print(f'file {filename} was deleted')
 
 
-def get_metadata(filename) -> dict:
+def get_metadata(filename):
     metadata = {'file_name': filename, 'location': os.path.abspath(filename), 'size': os.path.getsize(filename)}
     for key, value in metadata.items():
         print(key, ': ', value)
