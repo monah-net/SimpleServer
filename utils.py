@@ -10,7 +10,7 @@ def generate_name() -> str:
     return ''.join(random.choice(LETTERS_DIGITS) for _ in range(FILE_NAME_LENGTH))
 
 
-def show_options() -> int:
+def show_options() -> str:
     choice = input('''
         1. Create file.
         2. Read file.
