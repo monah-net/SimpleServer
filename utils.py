@@ -1,27 +1,23 @@
 import random
 import string
-import os
+from file_service import create_file, read_file, delete_file, get_metadata
 
-NAME_LENGTH = 10
-DEFAULT_OPTION = 999
+FILE_NAME_LENGTH = 10
+LETTERS_DIGITS = string.ascii_letters + string.digits
 
 
 def generate_name() -> str:
-    return ''.join(random.choice(string.ascii_letters + string.digits) for i in range(NAME_LENGTH))
+    return ''.join(random.choice(LETTERS_DIGITS) for _ in range(FILE_NAME_LENGTH))
 
 
 def show_options() -> int:
-    try:
-        choice = int(input('''
-            1. Create file.
-            2. Read file.
-            3. Delete file
-            4. Get meta data.
-            5. Exit
-            '''))
-    except ValueError:
-        print('Invalid option\n')
-        choice = DEFAULT_OPTION
+    choice = input('''
+        1. Create file.
+        2. Read file.
+        3. Delete file
+        4. Get meta data.
+        5. Exit
+        ''')
     return choice
 
 
@@ -45,3 +41,29 @@ def print_option_error():
 
 def print_location_error():
     print("File not found.\n")
+
+
+def app():
+    while True:
+        try:
+            choice = show_options()
+            if choice == '1':
+                content = enter_content()
+                create_file(content)
+            elif choice == '2':
+                filename = enter_filename()
+                read_file(filename)
+            elif choice == '3':
+                filename = enter_filename()
+                delete_file(filename)
+            elif choice == '4':
+                filename = enter_filename()
+                get_metadata(filename)
+            elif choice == '5':
+                break
+            else:
+                raise InvalidOption
+        except InvalidOption:
+            print_option_error()
+        except FileNotFoundError:
+            print_location_error()
