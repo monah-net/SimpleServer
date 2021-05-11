@@ -1,26 +1,39 @@
 import os
 import utils
+from utils import print_location_error
 
 
 def create_file(content=''):
-    filename = utils.generate_name() + '.txt'
-    with open(filename, 'w') as file:
-        file.write(content)
-    print(f'File {filename} was created in {os.getcwd()} directory.')
+    try:
+        filename = f'{utils.generate_name()} .txt'
+        with open(filename, 'w') as file:
+            file.write(content)
+        print(f'File {filename} was created in {os.getcwd()} directory.')
+        return filename
+    except FileNotFoundError:
+        print_location_error()
 
 
 def read_file(filename):
-    with open(filename, 'r') as file:
-        content = file.read()
-    print(content)
+    try:
+        with open(filename, 'r') as file:
+            content = file.read()
+        return content
+    except FileNotFoundError:
+        print_location_error()
 
 
 def delete_file(filename):
-    os.remove(filename)
-    print(f'file {filename} was deleted')
+    try:
+        os.remove(filename)
+        return f'file {filename} was deleted'
+    except FileNotFoundError:
+        print_location_error()
 
 
 def get_metadata(filename):
-    metadata = {'file_name': filename, 'location': os.path.abspath(filename), 'size': os.path.getsize(filename)}
-    for key, value in metadata.items():
-        print(key, ': ', value)
+    try:
+        metadata = {'file_name': filename, 'location': os.path.abspath(filename), 'size': os.path.getsize(filename)}
+        return metadata
+    except FileNotFoundError:
+        print_location_error()
