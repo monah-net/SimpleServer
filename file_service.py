@@ -1,17 +1,17 @@
 import os
 import utils
-from utils import print_location_error
+import logging
 
 
-def create_file(content=''):
+def create_file(file_extension, content=''):
     try:
-        filename = f'{utils.generate_name()} .txt'
+        filename = f'{utils.generate_name()}.{file_extension}'
         with open(filename, 'w') as file:
             file.write(content)
-        print(f'File {filename} was created in {os.getcwd()} directory.')
+        logging.info(f'File {filename} was created in {os.getcwd()} directory.')
         return filename
     except FileNotFoundError:
-        print_location_error()
+        logging.error('File wasn\'t created.')
 
 
 def read_file(filename):
@@ -20,15 +20,15 @@ def read_file(filename):
             content = file.read()
         return content
     except FileNotFoundError:
-        print_location_error()
+        logging.error('Cant read file. File wasn\'t not found.')
 
 
 def delete_file(filename):
     try:
         os.remove(filename)
-        return f'file {filename} was deleted'
+        logging.info(f'File {filename} was deleted')
     except FileNotFoundError:
-        print_location_error()
+        logging.error('Cant delete file. File wasn\'t not found.')
 
 
 def get_metadata(filename):
@@ -36,4 +36,4 @@ def get_metadata(filename):
         metadata = {'file_name': filename, 'location': os.path.abspath(filename), 'size': os.path.getsize(filename)}
         return metadata
     except FileNotFoundError:
-        print_location_error()
+        logging.error('Cant get metadata. File wasn\'t not found.')
