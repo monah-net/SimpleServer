@@ -75,3 +75,4 @@ def get_metadata(filename: str) -> Dict[str, str]:
         return metadata
     except FileNotFoundError:
         logging.error('Cant get metadata. File wasn\'t not found.')
+

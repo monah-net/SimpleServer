@@ -29,4 +29,3 @@ def enter_content() -> str:
 class InvalidOption(Exception):
     pass
 
-
