@@ -5,7 +5,13 @@ import argparse
 import logging
 
 
-def commandline_parser():
+def commandline_parser() -> argparse.ArgumentParser:
+    """
+    Parse arguments from command line
+
+    Returns:
+        arguments from command line
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument('action', type=str, help='Action')
     parser.add_argument('-fn', '--file_name', type=str, help='File name')
@@ -14,7 +20,14 @@ def commandline_parser():
     return parser
 
 
-def app():
+def app() -> None:
+    """
+    Run the program.
+
+    Raises:
+         InvalidOption: if necessary arguments weren't specified
+         FileNotFoundError: if defined file wasn't found
+    """
     args = commandline_parser().parse_args()
     try:
         choice = args.action
@@ -44,3 +57,4 @@ def app():
 
 if __name__ == '__main__':
     app()
+
