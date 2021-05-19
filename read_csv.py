@@ -1,13 +1,12 @@
-import pandas as pd
+import csv
 
 
-def read_csv(file):
-    return pd.read_csv(file, delimiter=';')
-
-
-def read_excel(file):
-    return pd.read_excel(file, sheet_name='Input')
-
-
-def read_json(file):
-    return pd.read_json(file)
+def read_csv(filepath):
+    try:
+        file_reader = csv.DictReader(open(filepath))
+        result = []
+        for row in file_reader:
+            result.append(row)
+        return result
+    except FileNotFoundError:
+        raise Exception("File not found")
