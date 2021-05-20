@@ -14,10 +14,9 @@ def read_csv(filepath):
     :return:list
     """
     try:
-        file_reader = csv.DictReader(open(filepath))
-        result = []
-        for row in file_reader:
-            result.append(row)
-        return result
+        with open(filepath) as f:
+            file_reader = csv.DictReader(f)
+            return [row for row in file_reader]
     except FileNotFoundError:
         logger.error("File not found. Check file name and continue\n")
+        raise FileNotFoundError
