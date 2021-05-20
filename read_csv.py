@@ -1,4 +1,8 @@
 import csv
+import logging
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 def read_csv(filepath):
@@ -9,4 +13,4 @@ def read_csv(filepath):
             result.append(row)
         return result
     except FileNotFoundError:
-        raise Exception("File not found!")
+        logger.error("File not found. Check file name and continue\n")
