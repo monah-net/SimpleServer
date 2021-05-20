@@ -9,4 +9,4 @@ def read_csv(filepath):
             result.append(row)
         return result
     except FileNotFoundError:
-        raise Exception("File not found")
+        raise Exception("File not found!")
