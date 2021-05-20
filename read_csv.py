@@ -9,7 +9,7 @@ logger.setLevel(logging.INFO)
 
 def read_csv(filepath):
     """
-    Function read_csv reads data from csv file and returns it's data
+    Reads data from CSV file
     :param filepath: file name with "csv" extension
     :return:list
     """
