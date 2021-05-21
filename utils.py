@@ -1,5 +1,7 @@
 import random
 import string
+import logging
+
 
 FILE_NAME_LENGTH = 10
 LETTERS_DIGITS = string.ascii_letters + string.digits
@@ -26,6 +28,13 @@ def enter_content() -> str:
     return content
 
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
+
 class InvalidOption(Exception):
     pass
 
+
+class UnknownFileExtension(Exception):
+    pass
