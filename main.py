@@ -1,8 +1,7 @@
 #! /usr/bin/env python3
 from file_service import create_file, read_file, delete_file, get_metadata
-from utils import InvalidOption
+from utils import InvalidOption, logger
 import argparse
-import logging
 
 
 def commandline_parser() -> argparse.ArgumentParser:
@@ -13,9 +12,9 @@ def commandline_parser() -> argparse.ArgumentParser:
         arguments from command line
     """
     parser = argparse.ArgumentParser()
-    parser.add_argument('action', type=str, help='Action')
-    parser.add_argument('-fn', '--file_name', type=str, help='File name')
-    parser.add_argument('-fe', '--file_extension', type=str, default='pkl', help='File extension')
+    parser.add_argument('-a', '--action', type=str, help='Action')
+    parser.add_argument('-n', '--file_name', type=str, help='File name')
+    parser.add_argument('-e', '--file_extension', type=str, default='pkl', help='File extension')
 
     return parser
 
@@ -23,6 +22,11 @@ def commandline_parser() -> argparse.ArgumentParser:
 def app() -> None:
     """
     Run the program.
+
+    parameters:
+        -a - one of the option: create, read, delete, metadata
+        -n - file name
+        -e - file extension
 
     Raises:
          InvalidOption: if necessary arguments weren't specified
@@ -41,7 +45,6 @@ def app() -> None:
         elif choice == 'delete':
             if args.file_name is None:
                 raise InvalidOption
-            print(args.file_name)
             delete_file(args.file_name)
         elif choice == 'metadata':
             if args.file_name is None:
@@ -50,9 +53,9 @@ def app() -> None:
         else:
             raise InvalidOption
     except InvalidOption:
-        logging.error('Invalid option is chosen.')
+        logger.error('Invalid option is chosen.')
     except FileNotFoundError:
-        logging.error('File is not found.')
+        logger.error('File is not found.')
 
 
 if __name__ == '__main__':

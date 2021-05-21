@@ -1,7 +1,72 @@
 import os
 import utils
-import logging
+from utils import logger, UnknownFileExtension
 from typing import Dict
+import csv
+import openpyxl as op
+import json
+
+
+def read_csv_file(filepath):
+    """
+    Read data from CSV file.
+
+    Args:
+        filepath: file name with "csv" extension
+    Returns:
+        list: content of the file.
+    Raises:
+        FileNotFoundError: if file doesn't exist.
+    """
+    try:
+        with open(filepath) as f:
+            file_reader = csv.DictReader(f)
+            return [row for row in file_reader]
+    except FileNotFoundError:
+        logger.error("File not found. Check file name and continue\n")
+        raise FileNotFoundError
+
+
+def read_excel_file(filename):
+    """
+    Read data from EXCEL file.
+
+    Args:
+        filename: file name with "xls" extension
+    Returns:
+        list: content of the file.
+    Raises:
+        FileNotFoundError: if file doesn't exist.
+    """
+    open_file = None
+    try:
+        open_file = op.load_workbook(filename=filename, read_only=True)
+        sheet = open_file.active
+        sheet = open_file.worksheets[sheet]
+        return [[cell.value for cell in row] for row in sheet.iter_rows()]
+    except FileNotFoundError:
+        logger.error("File not found. Check file name and continue\n")
+    finally:
+        if open_file is not None:
+            open_file.close()
+
+
+def read_json_file(filename):
+    """
+    Read data from json file.
+
+    Args:
+        filename: file name with "json" extension
+    Returns:
+        dict: content of the file.
+    Raises:
+        FileNotFoundError: if file doesn't exist.
+    """
+    try:
+        with open(filename) as f:
+            return json.load(f)
+    except FileNotFoundError:
+        logger.error("File not found. Check file name and continue\n")
 
 
 def create_file(file_extension: str, content='') -> str:
@@ -20,15 +85,15 @@ def create_file(file_extension: str, content='') -> str:
         filename = f'{utils.generate_name()}.{file_extension}'
         with open(filename, 'w') as file:
             file.write(content)
-        logging.info(f'File {filename} was created in {os.getcwd()} directory.')
+        logger.info(f'File {filename} was created in {os.getcwd()} directory.')
         return filename
     except FileNotFoundError:
-        logging.error('File wasn\'t created.')
+        logger.error('File wasn\'t created.')
 
 
-def read_file(filename: str) -> str:
+def read_file(filename: str):
     """
-    Read content of the file.
+    Read content from the file.
 
     Args:
         filename: name of the file with extension.
@@ -38,11 +103,18 @@ def read_file(filename: str) -> str:
         FileNotFoundError: if defined file doesn't exist.
     """
     try:
-        with open(filename, 'r') as file:
-            content = file.read()
-        return content
+        file_extension = os.path.splitext(filename)[1]
+        if file_extension == '.csv':
+            return read_csv_file(filename)
+        if file_extension == '.xlsx':
+            return read_excel_file(filename)
+        if file_extension == '.json':
+            return read_json_file(filename)
+        raise UnknownFileExtension
     except FileNotFoundError:
-        logging.error('Cant read file. File wasn\'t not found.')
+        logger.error('Cant read file. File wasn\'t not found.')
+    except UnknownFileExtension:
+        logger.error('Cant read file. Unknown file extension.')
 
 
 def delete_file(filename: str) -> None:
@@ -56,9 +128,9 @@ def delete_file(filename: str) -> None:
      """
     try:
         os.remove(filename)
-        logging.info(f'File {filename} was deleted')
+        logger.info(f'File {filename} was deleted')
     except FileNotFoundError:
-        logging.error('Cant delete file. File wasn\'t not found.')
+        logger.error('Cant delete file. File wasn\'t not found.')
 
 
 def get_metadata(filename: str) -> Dict[str, str]:
@@ -74,5 +146,5 @@ def get_metadata(filename: str) -> Dict[str, str]:
         metadata = {'file_name': filename, 'location': os.path.abspath(filename), 'size': os.path.getsize(filename)}
         return metadata
     except FileNotFoundError:
-        logging.error('Cant get metadata. File wasn\'t not found.')
+        logger.error('Cant get metadata. File wasn\'t not found.')
 
