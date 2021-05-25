@@ -38,3 +38,7 @@ class InvalidOption(Exception):
 
 class UnknownFileExtension(Exception):
     pass
+
+
+class LostDBConnection(Exception):
+    pass
