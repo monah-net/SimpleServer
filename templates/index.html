@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Home page
+{% endblock %}
+
+{% block nav_items %}
+<ul class="navbar-nav me-auto">
+<li class="nav-item">
+  <a class="nav-link" href="datasets">Datasets</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="about">About</a>
+</li>
+</ul>
+
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <form method="POST" action="/upload" enctype="multipart/form-data">
+      <div class="form-group">
+            <label for="inputFile" class="form-label mt-4">File input</label>
+            <input class="form-control" type="file" name="inputFile">
+      </div>
+      <br>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+{% endblock %}
