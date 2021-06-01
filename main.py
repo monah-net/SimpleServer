@@ -1,63 +1,55 @@
 #! /usr/bin/env python3
-from file_service import create_file, read_file, delete_file, get_metadata
-from utils import InvalidOption, logger
-import argparse
+import os
+from werkzeug.utils import secure_filename, redirect
+from utils import app
+from flask import Flask, render_template, request, url_for, send_from_directory
+from flask_sqlalchemy import SQLAlchemy
+
+app = Flask(__name__)
+UPLOAD_FOLDER = os.getcwd()
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+ALLOWED_EXTENSIONS = {'txt', 'xlsx', 'xls', 'csv'}
+app.config['SQLALCHEMY_DATABASE_URL'] = 'sqlite:///FileFolder.db'
+db = SQLAlchemy(app)
 
 
-def commandline_parser() -> argparse.ArgumentParser:
-    """
-    Parse arguments from command line
-
-    Returns:
-        arguments from command line
-    """
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-a', '--action', type=str, help='Action')
-    parser.add_argument('-n', '--file_name', type=str, help='File name')
-    parser.add_argument('-e', '--file_extension', type=str, default='pkl', help='File extension')
-
-    return parser
+# class File(db.Mode):
 
 
-def app() -> None:
-    """
-    Run the program.
+@app.route("/")
+def index():
+    return render_template("index.html")
 
-    parameters:
-        -a - one of the option: create, read, delete, metadata
-        -n - file name
-        -e - file extension
 
-    Raises:
-         InvalidOption: if necessary arguments weren't specified
-         FileNotFoundError: if defined file wasn't found
-    """
-    args = commandline_parser().parse_args()
-    try:
-        choice = args.action
-        if choice == 'create':
-            content = input('Enter file content or press <Enter> to continue')
-            create_file(args.file_extension, content)
-        elif choice == 'read':
-            if args.file_name is None:
-                raise InvalidOption
-            read_file(args.file_name)
-        elif choice == 'delete':
-            if args.file_name is None:
-                raise InvalidOption
-            delete_file(args.file_name)
-        elif choice == 'metadata':
-            if args.file_name is None:
-                raise InvalidOption
-            get_metadata(args.file_name)
-        else:
-            raise InvalidOption
-    except InvalidOption:
-        logger.error('Invalid option is chosen.')
-    except FileNotFoundError:
-        logger.error('File is not found.')
+@app.route("/uploads")
+def upload():
+    return render_template("uploads.html")
+
+@app.route("/about")
+def about():
+    return render_template("about.html")
+
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+
+
+@app.route('/uploads', methods=['POST'])
+def upload_file():
+    if request.method == 'POST':
+        file = request.files['filename']
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            return render_template('index.html')
+
+
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'],
+                               filename)
 
 
 if __name__ == '__main__':
-    app()
-
+    app.run(debug=True)
