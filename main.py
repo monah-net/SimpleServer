@@ -26,7 +26,8 @@ def index():
 
 def fetch_all_files():
     return [f for f in os.listdir(app.config['UPLOAD_FOLDER']) if '.' in f and f.rsplit('.', 1)[1] in
-                      ALLOWED_EXTENSIONS]
+            ALLOWED_EXTENSIONS]
+
 
 @app.route("/uploads")
 def upload():
