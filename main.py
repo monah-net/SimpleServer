@@ -1,5 +1,7 @@
 #! /usr/bin/env python3
 import os
+from os.path import isfile
+
 from werkzeug.utils import secure_filename, redirect
 from utils import app
 from flask import Flask, render_template, request, url_for, send_from_directory
@@ -18,12 +20,18 @@ db = SQLAlchemy(app)
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    uploaded_files = fetch_all_files()
+    return render_template("index.html", data=uploaded_files)
 
+
+def fetch_all_files():
+    return [f for f in os.listdir(app.config['UPLOAD_FOLDER']) if '.' in f and f.rsplit('.', 1)[1] in
+                      ALLOWED_EXTENSIONS]
 
 @app.route("/uploads")
 def upload():
     return render_template("uploads.html")
+
 
 @app.route("/about")
 def about():
@@ -42,7 +50,8 @@ def upload_file():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return render_template('index.html')
+            uploaded_files = fetch_all_files()
+            return render_template("index.html", data=uploaded_files)
 
 
 @app.route('/uploads/<filename>')
